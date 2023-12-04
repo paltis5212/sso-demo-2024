@@ -1,17 +1,22 @@
 import os
 import traceback
-from flask import Flask, Response, jsonify
+from datetime import datetime
+
+from flask import Flask, Response, abort, jsonify, request
+from flask_openapi3 import OpenAPI
+
 from sso_server.definition import ApiException
 from sso_server.schema import ErrorResponse
 from util.log import get_file_handler
+
 from .models import db
 from .oauth2 import config_oauth
+from .request_checker import set_app_request_check_rules
 from .routes import api
-from flask_openapi3 import OpenAPI
 
 
 def create_app(config=None):
-    app = OpenAPI(__name__)
+    app = OpenAPI(__name__, static_folder="./static", static_url_path="/static")
 
     # load default configuration
     app.config.from_object("sso_server.settings")
@@ -28,6 +33,7 @@ def create_app(config=None):
             app.config.from_pyfile(config)
 
     setup_app(app)
+    # set_app_request_check_rules(app)
     return app
 
 
@@ -46,12 +52,14 @@ def setup_app(app: OpenAPI):
     @app.errorhandler(ApiException)
     def handle_api_exception(error: ApiException):
         app.logger.warn(traceback.format_exc())
-        if len(error.args) > 0 and isinstance(response := error.args[0], ErrorResponse):
+        if len(error.args) > 0 and isinstance(response := error.args[0],
+                                              ErrorResponse):
             return response.model_dump(mode="json")
         return ErrorResponse(data=str(error)).model_dump(mode="json")
-    
+
     @app.errorhandler(Exception)
     def handle_exception(error: Exception):
         app.logger.error(traceback.format_exc())
         # TODO response 不應該暴露真的錯誤，改放到 log
-        return ErrorResponse(data="Something went wrong.").model_dump(mode="json")
+        return ErrorResponse(data="Something went wrong.").model_dump(
+            mode="json")

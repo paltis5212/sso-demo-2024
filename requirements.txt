@@ -2,3 +2,4 @@ Flask
 Flask-SQLAlchemy
 Authlib
 bcrypt
+flask_openapi3
