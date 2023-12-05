@@ -60,6 +60,5 @@ def setup_app(app: OpenAPI):
     @app.errorhandler(Exception)
     def handle_exception(error: Exception):
         app.logger.error(traceback.format_exc())
-        # TODO response 不應該暴露真的錯誤，改放到 log
         return ErrorResponse(data="Something went wrong.").model_dump(
             mode="json")

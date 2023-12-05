@@ -5,14 +5,15 @@ from sso_server.definition import TokenEndpointAuthMethod
 
 # * request
 
-# GetHome
+# PostLogin
 
-class GetHomeQuery(BaseModel):
-    next: Optional[str] = None
+class PostLoginBody(BaseModel):
+    username: str = Field(description="Username", min_length=1, examples=["admin"])
+    password: str = Field(description="Password", min_length=1, examples=["admin"])
 
 # PostHome
 
-class PostHomeBody(BaseModel):
+class PostRegisterBody(BaseModel):
     username: str = Field(description="Username", min_length=1)
     password: str = Field(description="Password", min_length=1)
 
