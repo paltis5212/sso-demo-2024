@@ -1,11 +1,20 @@
 from typing import Any, Optional
 from pydantic import BaseModel, Field
 
-from sso_server.definition import TokenEndpointAuthMethod
+from sso_server.definition import (
+    SCOPES,
+    ClientGrantType,
+    ClientResponseType,
+    TokenEndpointAuthMethod,
+)
+from util.other import get_enum_value_list
+from typing import Literal
 
 # * request
 
-# PostHome
+
+class PostHomeQuery(BaseModel):
+    next: Optional[str] = None
 
 
 class PostHomeForm(BaseModel):
@@ -13,24 +22,22 @@ class PostHomeForm(BaseModel):
     password: str
 
 
-# PostRegister
-
-
 class PostRegisterBody(BaseModel):
     username: str = Field(description="Username", min_length=1)
     password: str = Field(description="Password", min_length=1)
 
 
-# PostCreateClient
-
-
 class PostCreateClientBody(BaseModel):
-    client_name: str = Field("", examples=["My Client"])
-    client_uri: str = Field("", examples=["http://localhost:3000"])
-    grant_type: list[str] = Field([], examples=[["authorization_code", "password"]])
-    redirect_uri: list[str] = Field([], examples=["http://localhost:3000/callback"])
-    response_type: list[str] = Field([], examples=["code"])
-    scope: str = Field("", examples=["profile"])
+    client_name: str = Field("")
+    client_uri: str = Field("")
+    grant_types: list[ClientGrantType] = Field(
+        [], description=f"可多選: {get_enum_value_list(ClientGrantType)}。"
+    )
+    redirect_uris: list[str] = Field([])
+    response_types: list[ClientResponseType] = Field(
+        [], description=f"可多選: {get_enum_value_list(ClientResponseType)}。"
+    )
+    scopes: str = Field("", description=f"可多選: {SCOPES}。使用空格隔開，例如: 'scope1 scope2'。")
     token_endpoint_auth_method: TokenEndpointAuthMethod = (
         TokenEndpointAuthMethod.CLIENT_SECRET_BASIC
     )
@@ -38,13 +45,6 @@ class PostCreateClientBody(BaseModel):
 
 class PostAuthorizeBody(BaseModel):
     confirm: bool
-
-
-class PostIssueTokenBody(BaseModel):
-    grant_type: str
-    username: str
-    password: str
-    scope: str
 
 
 # * response

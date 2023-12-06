@@ -8,6 +8,7 @@ from flask_openapi3 import APIBlueprint
 from sso_server.definition import ApiException, TokenEndpointAuthMethod
 from sso_server.schema import (
     ErrorResponse,
+    PostHomeQuery,
     PostAuthorizeBody,
     PostCreateClientBody,
     PostHomeForm,
@@ -43,7 +44,7 @@ def get_home():
 
 
 @api.post("/")
-def post_home(form: PostHomeForm):
+def post_home(query: PostHomeQuery, form: PostHomeForm):
     """登入"""
     user: User = User.query.filter_by(username=form.username).first()
     if not user:
@@ -54,9 +55,8 @@ def post_home(form: PostHomeForm):
     # 驗證通過，登入
     session["user_id"] = user.id
 
-    next_page = request.args.get("next")
-    if next_page:
-        return redirect(next_page)
+    if query.next:
+        return redirect(query.next)
     return redirect("/")
 
 
@@ -88,7 +88,7 @@ def post_register(form: PostRegisterBody):
 @api.get("/logout")
 def logout():
     """登出"""
-    del session["user_id"]
+    session.pop("user_id", None)
     return redirect("/")
 
 
@@ -115,10 +115,10 @@ def post_create_client(form: PostCreateClientBody):
     client_metadata = {
         "client_name": form.client_name,
         "client_uri": form.client_uri,
-        "grant_types": split_by_crlf(form.grant_type),
-        "redirect_uris": split_by_crlf(form.redirect_uri),
-        "response_types": split_by_crlf(form.response_type),
-        "scope": form.scope,
+        "grant_types": [e.value for e in form.grant_types],
+        "redirect_uris": form.redirect_uris,
+        "response_types": [e.value for e in form.response_types],
+        "scope": form.scopes,
         "token_endpoint_auth_method": form.token_endpoint_auth_method.value,
     }
     client.set_client_metadata(client_metadata)
@@ -172,5 +172,6 @@ def revoke_token():
 @api.get("/api/me")
 @require_oauth("profile")
 def api_me():
+    """要帶 TOKEN 的驗證"""
     user: User = current_token.user
     return jsonify(id=user.id, username=user.username)

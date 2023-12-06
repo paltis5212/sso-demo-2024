@@ -13,6 +13,9 @@ from .models import db
 from .oauth2 import config_oauth
 from .request_checker import set_app_request_check_rules
 from .routes import api
+from authlib.common.errors import AuthlibBaseError
+from authlib.integrations.flask_oauth2.errors import _HTTPException
+import json
 
 
 def create_app(config=None):
@@ -52,13 +55,24 @@ def setup_app(app: OpenAPI):
     @app.errorhandler(ApiException)
     def handle_api_exception(error: ApiException):
         app.logger.warn(traceback.format_exc())
-        if len(error.args) > 0 and isinstance(response := error.args[0],
-                                              ErrorResponse):
+        if len(error.args) > 0 and isinstance(response := error.args[0], ErrorResponse):
             return response.model_dump(mode="json")
         return ErrorResponse(data=str(error)).model_dump(mode="json")
+
+    @app.errorhandler(AuthlibBaseError)
+    def handle_authlib_base_error(error: AuthlibBaseError):
+        app.logger.warn(traceback.format_exc())
+        return ErrorResponse(data=error.error).model_dump(mode="json")
+
+    @app.errorhandler(_HTTPException)
+    def handle_authlib_http_exception(error: _HTTPException):
+        app.logger.warn(traceback.format_exc())
+        try:
+            return json.loads(error.get_body())
+        except Exception:
+            return str(error.get_body())
 
     @app.errorhandler(Exception)
     def handle_exception(error: Exception):
         app.logger.error(traceback.format_exc())
-        return ErrorResponse(data="Something went wrong.").model_dump(
-            mode="json")
+        return ErrorResponse(data="Something went wrong.").model_dump(mode="json")
