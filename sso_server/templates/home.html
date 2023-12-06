@@ -27,6 +27,7 @@
 <form action="" method="post">
   <input type="text" name="username" placeholder="username">
   <input type="password" name="password" placeholder="password" autocomplete="current-password">
-  <button type="submit">Login / Signup</button>
+  <button type="submit">Login</button>
 </form>
+<a href="{{ url_for('.get_register') }}">Register</a>
 {% endif %}
