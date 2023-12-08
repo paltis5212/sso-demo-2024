@@ -4,3 +4,4 @@ Authlib
 bcrypt
 flask_openapi3
 requests
+rich
