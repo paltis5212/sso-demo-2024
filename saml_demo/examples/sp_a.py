@@ -20,7 +20,7 @@ app = Flask(__name__)
 app.debug = True
 app.secret_key = 'not a secret'
 
-app.config['SERVER_NAME'] = 'localhost:9001'
+app.config['SERVER_NAME'] = 'localhost:9000'
 app.config['SAML2_SP'] = {
     'certificate': CERTIFICATE,
     'private_key': PRIVATE_KEY,
@@ -31,9 +31,9 @@ app.config['SAML2_IDENTITY_PROVIDERS'] = [
         'CLASS': 'flask_saml2.sp.idphandler.IdPHandler',
         'OPTIONS': {
             'display_name': 'My Identity Provider',
-            'entity_id': 'http://localhost:8000/saml/metadata.xml',
-            'sso_url': 'http://localhost:8000/saml/login/',
-            'slo_url': 'http://localhost:8000/saml/logout/',
+            'entity_id': 'https://localhost:8000/saml/metadata.xml',
+            'sso_url': 'https://localhost:8000/saml/login/',
+            'slo_url': 'https://localhost:8000/saml/logout/',
             'certificate': IDP_CERTIFICATE,
         },
     },
@@ -71,4 +71,4 @@ app.register_blueprint(sp.create_blueprint(), url_prefix='/saml/')
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=9001)
+    app.run(host='0.0.0.0', port=9000, ssl_context='adhoc')

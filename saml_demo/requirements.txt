@@ -1,0 +1,9 @@
+pyOpenSSL
+Flask
+lxml
+pytz
+defusedxml
+signxml
+attrs
+bs4
+iso8601

@@ -20,7 +20,7 @@ app = Flask(__name__)
 app.debug = True
 app.secret_key = 'not a secret'
 
-app.config['SERVER_NAME'] = 'localhost:9000'
+app.config['SERVER_NAME'] = 'localhost:9001'
 app.config['SAML2_SP'] = {
     'certificate': CERTIFICATE,
     'private_key': PRIVATE_KEY,
@@ -71,4 +71,4 @@ app.register_blueprint(sp.create_blueprint(), url_prefix='/saml/')
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=9000)
+    app.run(host='0.0.0.0', port=9001)

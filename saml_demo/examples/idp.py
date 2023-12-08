@@ -45,7 +45,7 @@ class Login(MethodView):
 
         next_url = request.args.get('next')
         next = f'<input type="hidden" name="next" value="{next_url}">'
-        password = f'<input name="password">'
+        password = f'Password: <input name="password">'
 
         submit = '<div><input type="submit" value="Login"></div>'
 
@@ -60,6 +60,8 @@ class Login(MethodView):
         password = request.form['password']
 
         ## TODO: if password not match...
+        if password != '12345':
+            abort(401)
 
         session['user'] = user
         logging.info("Logged user", user, "in")
@@ -82,8 +84,8 @@ app.config['SAML2_SERVICE_PROVIDERS'] = [
         'CLASS': 'tests.idp.base.AttributeSPHandler',
         'OPTIONS': {
             'display_name': 'Example Service Provider A',
-            'entity_id': 'http://localhost:9000/saml/metadata.xml',
-            'acs_url': 'http://localhost:9000/saml/acs/',
+            'entity_id': 'https://localhost:9000/saml/metadata.xml',
+            'acs_url': 'https://localhost:9000/saml/acs/',
             'certificate': SP_CERTIFICATE,
         },
     },
@@ -91,8 +93,8 @@ app.config['SAML2_SERVICE_PROVIDERS'] = [
         'CLASS': 'tests.idp.base.AttributeSPHandler',
         'OPTIONS': {
             'display_name': 'Example Service Provider B',
-            'entity_id': 'http://localhost:9001/saml/metadata.xml',
-            'acs_url': 'http://localhost:9001/saml/acs/',
+            'entity_id': 'https://localhost:9001/saml/metadata.xml',
+            'acs_url': 'https://localhost:9001/saml/acs/',
             'certificate': SP_CERTIFICATE,
         },
     }
@@ -103,4 +105,4 @@ app.register_blueprint(idp.create_blueprint(), url_prefix='/saml/')
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=8000, ssl_context='adhoc')
