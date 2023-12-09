@@ -30,7 +30,7 @@ app.config['SAML2_IDENTITY_PROVIDERS'] = [
     {
         'CLASS': 'flask_saml2.sp.idphandler.IdPHandler',
         'OPTIONS': {
-            'display_name': 'My Identity Provider',
+            'display_name': 'Identity Provider A',
             'entity_id': 'https://localhost:8000/saml/metadata.xml',
             'sso_url': 'https://localhost:8000/saml/login/',
             'slo_url': 'https://localhost:8000/saml/logout/',
@@ -46,9 +46,12 @@ def index():
         auth_data = sp.get_auth_data_in_session()
 
         message = f'''
+        <p>Hi~ this is Service Provider A</p>
         <p>You are logged in as <strong>{auth_data.nameid}</strong>.
         The IdP sent back the following attributes:<p>
         '''
+        
+        print(auth_data.to_dict())
 
         attrs = '<dl>{}</dl>'.format(''.join(
             f'<dt>{attr}</dt><dd>{value}</dd>'
@@ -59,7 +62,7 @@ def index():
 
         return message + attrs + logout
     else:
-        message = '<p>You are logged out.</p>'
+        message = '<p>Hi~ this is Service Provider A</p><p>You are logged out.</p>'
 
         login_url = url_for('flask_saml2_sp.login')
         link = f'<p><a href="{login_url}">Log in to continue</a></p>'
