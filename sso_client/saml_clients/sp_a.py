@@ -2,8 +2,8 @@
 from flask import Flask, url_for
 
 from flask_saml2.sp import ServiceProvider
-from tests.idp.base import CERTIFICATE as IDP_CERTIFICATE
-from tests.sp.base import CERTIFICATE, PRIVATE_KEY
+from sso_server.saml.tests.idp.base import CERTIFICATE as IDP_CERTIFICATE
+from sso_server.saml.tests.sp.base import CERTIFICATE, PRIVATE_KEY
 
 
 class ExampleServiceProvider(ServiceProvider):

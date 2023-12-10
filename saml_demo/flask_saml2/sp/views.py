@@ -80,6 +80,9 @@ class AssertionConsumer(SAML2View):
     def post(self):
         saml_request = request.form['SAMLResponse']
         relay_state = request.form['RelayState']
+        # data = request.get_json()
+        # saml_request = data['SAMLResponse']
+        # relay_state = data['RelayState']
 
         for handler in self.sp.get_idp_handlers():
             try:

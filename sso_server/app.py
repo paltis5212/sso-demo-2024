@@ -1,4 +1,3 @@
-from flask import Response
 import json
 import logging
 import os
@@ -6,15 +5,17 @@ import traceback
 
 from authlib.common.errors import AuthlibBaseError
 from authlib.integrations.flask_oauth2.errors import _HTTPException
+from flask import Response
 from flask_openapi3 import OpenAPI
-from util.error_handler import set_error_handlers
 
+from util.error_handler import set_error_handlers
 from util.log import get_file_handler
 
 from .models import db
 from .oauth2 import config_oauth
-from .routes import api
 from .request_checker import set_app_request_check_rules
+from .routes import api
+from .saml.setup_saml import setup_saml
 
 
 def create_app(config=None):
@@ -40,6 +41,7 @@ def create_app(config=None):
 
     setup_app(app)
     # set_app_request_check_rules(app)
+    setup_saml(app)
     return app
 
 

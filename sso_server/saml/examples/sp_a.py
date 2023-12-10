@@ -31,9 +31,9 @@ app.config['SAML2_IDENTITY_PROVIDERS'] = [
         'CLASS': 'flask_saml2.sp.idphandler.IdPHandler',
         'OPTIONS': {
             'display_name': 'Identity Provider A',
-            'entity_id': 'https://localhost:5001/sso/saml/api/metadata.xml',
-            'sso_url': 'https://localhost:5001/sso/saml/api/login/',
-            'slo_url': 'https://localhost:5001/sso/saml/api/logout/',
+            'entity_id': 'https://localhost:8000/saml/metadata.xml',
+            'sso_url': 'https://localhost:8000/saml/login/',
+            'slo_url': 'https://localhost:8000/saml/logout/',
             'certificate': IDP_CERTIFICATE,
         },
     },
@@ -50,15 +50,12 @@ def index():
         <p>You are logged in as <strong>{auth_data.nameid}</strong>.
         The IdP sent back the following attributes:<p>
         '''
-
+        
         print(auth_data.to_dict())
 
-        # attrs = '<dl>{}</dl>'.format(''.join(
-        #     f'<dt>{attr}</dt><dd>{value}</dd>'
-        #     for attr, value in auth_data.attributes.items()))
-        attrs = ""
-        for attr, value in auth_data.attributes.items():
-            attrs += f'{attr}: {value}\n'
+        attrs = '<dl>{}</dl>'.format(''.join(
+            f'<dt>{attr}</dt><dd>{value}</dd>'
+            for attr, value in auth_data.attributes.items()))
 
         logout_url = url_for('flask_saml2_sp.logout')
         logout = f'<form action="{logout_url}" method="POST"><input type="submit" value="Log out"></form>'
