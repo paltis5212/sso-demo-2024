@@ -1,3 +1,4 @@
+import time
 from authlib.integrations.flask_oauth2 import (
     AuthorizationServer,
     ResourceProtector,
@@ -59,9 +60,11 @@ class PasswordGrant(grants.ResourceOwnerPasswordCredentialsGrant):
 
 
 class RefreshTokenGrant(grants.RefreshTokenGrant):
+    INCLUDE_NEW_REFRESH_TOKEN = True
     def authenticate_refresh_token(self, refresh_token):
         token: OAuth2Token = OAuth2Token.query.filter_by(refresh_token=refresh_token).first()
         if token and token.is_refresh_token_active():
+            token.refresh_token_revoked_at = int(time.time())
             return token
 
     def authenticate_user(self, credential):
