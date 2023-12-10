@@ -1,8 +1,9 @@
+import json
 import os
 import traceback
-from datetime import datetime
 
-from flask import Flask, Response, abort, jsonify, request
+from authlib.common.errors import AuthlibBaseError
+from authlib.integrations.flask_oauth2.errors import _HTTPException
 from flask_openapi3 import OpenAPI
 
 from sso_server.definition import ApiException
@@ -11,15 +12,16 @@ from util.log import get_file_handler
 
 from .models import db
 from .oauth2 import config_oauth
-from .request_checker import set_app_request_check_rules
 from .routes import api
-from authlib.common.errors import AuthlibBaseError
-from authlib.integrations.flask_oauth2.errors import _HTTPException
-import json
+from .request_checker import set_app_request_check_rules
 
 
 def create_app(config=None):
-    app = OpenAPI(__name__, static_folder="./static", static_url_path="/static")
+    app = OpenAPI(
+        __name__,
+        static_folder="./static/assets",
+        static_url_path="/dsebd/sso/static/assets",
+    )
 
     # load default configuration
     app.config.from_object("sso_server.settings")
@@ -36,7 +38,7 @@ def create_app(config=None):
             app.config.from_pyfile(config)
 
     setup_app(app)
-    # set_app_request_check_rules(app)
+    set_app_request_check_rules(app)
     return app
 
 

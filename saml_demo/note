@@ -1,0 +1,7 @@
+sp_a - - [08/Dec/2023 13:11:37] "GET / HTTP/1.1" 200 -
+sp_a - - [08/Dec/2023 13:11:46] "GET /saml/login/ HTTP/1.1" 302 -
+sp_a - - [08/Dec/2023 13:11:46] "GET /saml/login/idp/?entity_id=https://localhost:8000/saml/metadata.xml&next=https://localhost:9000/ HTTP/1.1" 302 -
+
+idp - - [08/Dec/2023 13:11:55] "GET /saml/login/?SAMLRequest=fZFBT8JAEIX/SrNXA52utSwT2gTlIAlGAtWrGdoVNml3cWdr/PkWUIKJ4TiZb9%2Bb93bC1DZ7nHZhZ1f6o9Mcoq%2B2sYzHRS46b9ERG0ZLrWYMFa6nTwuUQ8C9d8FVrhHRlFn7YJx9cJa7Vvu19p%2Bm0i%2BrRS52IewZ47hxFTU7xwHHABAfDGKqOBbRrLc1lg4C/%2BHqjDdua2z/YD7LxVudKQkbGGWyojSTivR7mqoE6nQ0Vqmqe4y503PLgWzIhQR5O0jkAFQJd5gkmGbDZAwSRjcACCCi5U%2Bge2NrY7fX029OEONjWS4Hy%2Bd1KaJX7fkYogdEMTncjMcj/EWr12Xpt0pRXCuu1YFqCjTsdSfxhVFxmv7%2BafEN&RelayState=https://localhost:9000/&SigAlg=http://www.w3.org/2001/04/xmldsig-more%23rsa-sha256&Signature=0XBQhQpJR2dSF6ULPOHIhsI9AvSeL72kVxQTltVX0bgB49trN5R8UxjR1IrSjsQVBFa1lld0jQgnl6B7qJxa7ac5OqNTBAlh8YcNsX5cayEB43cV9zBonMZOK/O2n4tnvqxzh4asW3eN7rMZ3N26VHIRBXi%2BA98bGgJPvDT7I3qI5sZcui4zIFBSRA/OpuFSu9YYM8et/n6coEDk1sTv5fIwQA7/2Fr%2BYfS/D9suJHEhX5os18PN3OSVL3U8DGs7OIN/XXOLF5NphHZ5zIXRinZXyB5m8X1JAZqc0ZKQuc12dojmJfjRPpMC2wIJ23VueJXHdKyxdify8UVe%2BBfagA%3D%3D HTTP/1.1" 302 -
+idp - - [08/Dec/2023 13:11:55] "GET /saml/login/process/ HTTP/1.1" 302 -
+idp - - [08/Dec/2023 13:11:55] "GET /login/?next=https://localhost:8000/saml/login/process/ HTTP/1.1" 200 -
