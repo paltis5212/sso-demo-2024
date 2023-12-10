@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class ExampleIdentityProvider(IdentityProvider):
+
     def login_required(self):
         if not self.is_user_logged_in():
             next = url_for("saml_login", next=request.url)
@@ -31,23 +32,21 @@ class ExampleIdentityProvider(IdentityProvider):
 
 
 users = {
-    user.username: user
-    for user in [
+    user.username: user for user in [
         User("alex", "alex@example.com"),
         User("jordan", "jordan@example.com"),
     ]
 }
 
-
 idp = ExampleIdentityProvider()
 
 
 class Login(MethodView):
+
     def get(self):
         options = "".join(
             f'<option value="{user.username}">{user.email}</option>'
-            for user in users.values()
-        )
+            for user in users.values())
         select = f'<div><label>Select a user: <select name="user">{options}</select></label></div>'
 
         next_url = request.args.get("next")
@@ -154,7 +153,7 @@ class Login(MethodView):
 def setup_saml(app: Flask):
     # app.debug = True
     app.secret_key = "not a secret"
-    app.config["SERVER_NAME"] = "localhost:5001"
+    app.config["SERVER_NAME"] = "www.svc.deltaww-energy.com:5001"
     app.config["SAML2_IDP"] = {
         "autosubmit": True,
         "certificate": CERTIFICATE,

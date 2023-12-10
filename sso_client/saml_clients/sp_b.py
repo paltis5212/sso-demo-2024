@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from venv import logger
+
 from flask import Flask, url_for
 
 from flask_saml2.sp import ServiceProvider
@@ -8,6 +9,7 @@ from sso_server.saml.tests.sp.base import CERTIFICATE, PRIVATE_KEY
 
 
 class ExampleServiceProvider(ServiceProvider):
+
     def get_logout_return_url(self):
         return url_for("index", _external=True)
 
@@ -31,11 +33,16 @@ app.config["SAML2_IDENTITY_PROVIDERS"] = [
     {
         "CLASS": "flask_saml2.sp.idphandler.IdPHandler",
         "OPTIONS": {
-            "display_name": "Identity Provider B",
-            "entity_id": "https://localhost:5001/sso/saml/api/metadata.xml",
-            "sso_url": "https://localhost:5001/sso/saml/api/login/",
-            "slo_url": "https://localhost:5001/sso/saml/api/logout/",
-            "certificate": IDP_CERTIFICATE,
+            "display_name":
+                "Identity Provider B",
+            "entity_id":
+                "https://www.svc.deltaww-energy.com:5001/sso/saml/api/metadata.xml",
+            "sso_url":
+                "https://www.svc.deltaww-energy.com:5001/sso/saml/api/login/",
+            "slo_url":
+                "https://www.svc.deltaww-energy.com:5001/sso/saml/api/logout/",
+            "certificate":
+                IDP_CERTIFICATE,
         },
     },
 ]
@@ -75,7 +82,6 @@ def index():
 
 
 app.register_blueprint(sp.create_blueprint(), url_prefix='/saml/')
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=9001, ssl_context='adhoc')
