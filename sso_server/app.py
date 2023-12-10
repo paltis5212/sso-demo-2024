@@ -1,13 +1,14 @@
+from flask import Response
 import json
+import logging
 import os
 import traceback
 
 from authlib.common.errors import AuthlibBaseError
 from authlib.integrations.flask_oauth2.errors import _HTTPException
 from flask_openapi3 import OpenAPI
+from util.error_handler import set_error_handlers
 
-from sso_server.definition import ApiException
-from sso_server.schema import ErrorResponse
 from util.log import get_file_handler
 
 from .models import db
@@ -38,7 +39,7 @@ def create_app(config=None):
             app.config.from_pyfile(config)
 
     setup_app(app)
-    set_app_request_check_rules(app)
+    # set_app_request_check_rules(app)
     return app
 
 
@@ -51,30 +52,9 @@ def setup_app(app: OpenAPI):
     app.register_api(api)
 
     # register logger
+    app.logger.setLevel(logging.INFO)
     app.logger.addHandler(get_file_handler("log/sso_server.log"))
 
     # register error handler
-    @app.errorhandler(ApiException)
-    def handle_api_exception(error: ApiException):
-        app.logger.warn(traceback.format_exc())
-        if len(error.args) > 0 and isinstance(response := error.args[0], ErrorResponse):
-            return response.model_dump(mode="json")
-        return ErrorResponse(data=str(error)).model_dump(mode="json")
 
-    @app.errorhandler(AuthlibBaseError)
-    def handle_authlib_base_error(error: AuthlibBaseError):
-        app.logger.warn(traceback.format_exc())
-        return ErrorResponse(data=error.error).model_dump(mode="json")
-
-    @app.errorhandler(_HTTPException)
-    def handle_authlib_http_exception(error: _HTTPException):
-        app.logger.warn(traceback.format_exc())
-        try:
-            return json.loads(error.get_body())
-        except Exception:
-            return str(error.get_body())
-
-    @app.errorhandler(Exception)
-    def handle_exception(error: Exception):
-        app.logger.error(traceback.format_exc())
-        return ErrorResponse(data="Something went wrong.").model_dump(mode="json")
+    set_error_handlers(app)

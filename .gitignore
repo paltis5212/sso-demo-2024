@@ -4,6 +4,7 @@
 .vscode
 __pycache__
 log/*
+ca/*
 !.gitkeep
 !test.sqlite
 .DS_Store

@@ -4,8 +4,8 @@ from urllib.parse import urlparse
 from flask import Flask, abort, jsonify, request
 from rich import print
 
-from sso_server.definition import ApiException
-from sso_server.schema import ErrorResponse
+from util.error_handler import ApiException
+from util.schema import ErrorResponse
 
 
 class SimpleMiddleware:
@@ -155,4 +155,4 @@ def set_app_request_check_rules(app: Flask):
         ALLOWED_DOMAIN = "www.svc.deltaww-energy.com"
         hostname = urlparse(request.base_url).hostname
         if hostname != ALLOWED_DOMAIN:
-            abort(403, "Invalid domain")
+            return ErrorResponse(message="Invalid domain").model_dump(mode="json"), 403

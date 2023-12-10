@@ -3,11 +3,12 @@ import time
 import bcrypt
 from authlib.integrations.flask_oauth2 import current_token
 from authlib.oauth2 import OAuth2Error
-from flask import jsonify, redirect, render_template, request, session, url_for
+from flask import jsonify, redirect, render_template, request, session, url_for, abort
 from flask_openapi3 import APIBlueprint
-from sso_server.definition import ApiException, TokenEndpointAuthMethod
+from util.error_handler import ApiException
+from util.schema import ErrorResponse
+from sso_server.definition import TokenEndpointAuthMethod
 from sso_server.schema import (
-    ErrorResponse,
     PostHomeQuery,
     PostAuthorizeBody,
     PostCreateClientBody,
