@@ -1,0 +1,243 @@
+openapi: 3.0.3
+info:
+  title: saml-demo-integrated
+  contact: {}
+  version: 1.0.0
+  description: |
+    參考文件:
+    http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-tech-overview-2.0-cd-02.html#5.1.2.SP-Initiated%20SSO:%20%20Redirect/POST%20Bindings|outline
+
+
+    <img src="http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-tech-overview-2.0-cd-02_html_25426336.gif" />
+servers:
+- url: https://www.svc.deltaww-energy.com:9000/
+  description: saml server
+- url: https://www.svc.deltaww-energy.com:9001/
+  description: saml client
+tags:
+- name: client
+- name: server
+paths:
+  /saml/acs:
+    post:
+      tags:
+      - client
+      summary: redirect_to_sp
+      description: Get the assert from idp and decode the response with itself private
+      operationId: redirectToSp
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                RelayState:
+                  type: string
+                SAMLResponse:
+                  type: string
+      responses:
+        "302":
+          description: ""
+          content: {}
+  /saml/login/:
+    get:
+      tags:
+      - client
+      summary: start saml login process
+      operationId: "start saml login process"
+      responses:
+        "302":
+          description: "進行轉址，開始準備與 idp 的簽章"
+          headers:
+            location:
+              schema:
+                type: string
+                example: "https://www.svc.deltaww-energy.com:9000/saml/idp/?entity_id=xxxxx&next=123545"
+              description: redirect url
+  /saml/login/idp/:
+    get:
+      tags:
+      - client
+      summary: 轉址 idp saml
+      description: 轉址 idp saml
+      operationId: idpSaml
+      parameters:
+      - name: entity_id
+        in: query
+        schema:
+          type: string
+        example: "{{idp_host}}/sso/saml/api/metadata.xml"
+      - name: next
+        in: query
+        schema:
+          type: string
+        example: "{{sp_host}}"
+      responses:
+        "302":
+          description: "根據 entity_id 取得 saml 通訊方式，並且將自己的request轉換成 xml + base64 編碼後，用 idp 的 public key 加密，加密結果透由 query parameter 傳給 idp"
+          headers:
+            location:
+              schema:
+                type: string
+                example: "https://www.svc.deltaww-energy.com:5001/sso/saml/api/login?SAMLRequest=lVJLb4JAEP4rZK8N7C6C4ERIbD3UxKam0l6bdVl1E9ilzCLtvy8%2BmtiLaY%2BT%2BeZ7ZaYo6qqBWef25kV9dAqd91lXBuG0yEjXGrACNYIRtUJwEtazpyWEAYOmtc5KWxFvhqhap615sAa7WrVr1R60VK8vy4zsnWsQKO37PsCDDEpVOdH3vjKq3X0F0tYwYYzRoyIVEinx5oMPbcSR8U%2F3MWOcItoLR6NpZXfaDEyLeUbeeblNo3HKkkkaRTKWGylEGCVKptuYMz4eYIidWhh0wriMhCwc%2BTz0OS94BPEIIh6MeRIn7I4xYIx4q0v0e21KbXa3e9qcQQiPRbHyV8%2FrgnhvqsVTugFA8unRN5xMtFf936YVP6WT%2FF8V18qJUjgRDEJTeqWcn6ff75B%2FAw%3D%3D&RelayState=https%3A%2F%2Fwww.svc.deltaww-energy.com%3A9000&SigAlg=http%3A%2F%2Fwww.w3.org%2F2001%2F04%2Fxmldsig-more%23rsa-sha256&Signature=I43x%2FoHLIHv0oLd7pbuBaJ0THctJLoMpyB2zg2IkHRV0Xf%2FecqPyXXyGWPpUqU53QDyesQX4YDcRt3PYQ3JaCR9ND25CvF42YjkAZpEcl414itTruWra5j%2BbCPqAWzFaau3F%2BiHpwujhFIKAodcZfxIwnP0FnxxozzJoT5Y%2BLWtguSn%2FKJEniC5nW0tHoRNtakiYCHc%2FFeQVJHUshjel4XbRW09j3HTFN6XranIDpxxBGTgdVO%2BWRqrHqGcJOXsKQHdUlrkaehsRvHi1uDI2ZrmXjHaFqqPxo4FUndp1Iar3xW5VphNtBgPxPklTMUpEcxJqy20LwBDtxwJFhASn1g%3D%3D%0A"
+              description: 轉址目標
+  /saml/logout/:
+    post:
+      tags:
+      - client
+      summary: logout_from_sp
+      description: logout_from_sp
+      operationId: logoutFromSp
+      responses:
+        "200":
+          description: ""
+          content: {}
+  /sso/saml/api/login/:
+    get:
+      tags:
+      - server
+      summary: IDP 接收 SP SAML 登入請求
+      description: request_to_idp_from_a
+      operationId: requestToIdpFromA
+      parameters:
+      - name: SAMLRequest
+        in: query
+        schema:
+          type: string
+        description: |
+          The SAMLResponse parameter is the base64 encoding of the following <samlp:Response> element
+          ```
+          <samlp:AuthnRequest
+            xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+            xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+            ID="identifier_1"
+            Version="2.0"
+            IssueInstant="2004-12-05T09:21:59Z"
+            AssertionConsumerServiceIndex="1">
+            <saml:Issuer>https://sp.example.com/SAML2</saml:Issuer>
+            <samlp:NameIDPolicy
+            AllowCreate="true"
+            Format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient"/>
+          </samlp:AuthnRequest>
+          ```
+      - name: RelayState
+        in: query
+        schema:
+          type: string
+      - name: SigAlg
+        in: query
+        schema:
+          type: string
+          default: http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
+      - name: Signature
+        in: query
+        description: hash string via SigAlg and idp's public key
+        schema:
+          type: string
+          example: mEP9aoOIAGJzfJWkv0eplbDrObhZ7DDiSBwFiGG3rqQiLkOthbunJZgZbk4WpKSagCtjGQjw6bJI2BNrGZ7vkwFAR7VjWXATM15xi4wzNuudCJ8widpYcMINHQhzZTIIvVoQPdLtk4lhAg6wS0yMjrnZ8sCIx6MnMAlYFr3F3rRVhbCZ66eYpKSv7U3nhkY0zxwZKIIWmogB7QNOqUjEqwhFuHVCjbnZc4CH457GCLXPIfNSVWEKQSCTZf37udEEc%2B8%2BCGD3/6fBeHf97hdbZaGvi9YY39b5rwuzFHsztu0DhYTaqJxaeEgLM90Yf/jLE9cc5BV769w6lPOcRjF23A%3D%3D
+      responses:
+          "302":
+            description: "若 idp 未登入，則導轉到 /sso/saml/login 頁面讓使用者開始登入，若已登入，則將使用者資訊及屬性透過 saml 送給 sp 的 /saml/acs"
+            headers:
+              location:
+                schema:
+                  type: string
+                description: | 
+                  轉址目標，可能為：
+
+                  ```https://www.svc.deltaww-energy.com:5001/sso/saml/login```
+                  或是 ```https://www.svc.deltaww-energy.com:9000/saml/api/login/process```
+            content: {}
+  /sso/saml/api/logout:
+    get:
+      tags:
+      - server
+      summary: logout_from_idp
+      description: logout_from_idp
+      operationId: logoutFromIdp
+      responses:
+        "200":
+          description: ""
+          content: {}
+  /sso/saml/login:
+    post:
+      tags:
+      - server
+      summary: login
+      description: login
+      operationId: login
+      parameters:
+      - name: ""
+        in: query
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                next:
+                  type: string
+                  default: "https://www.svc.deltaww-energy.com:5001/sso/saml/api/login/process"
+                  description: 開始產生回應的 xml，並通過 sp 的 public key 加密
+                password:
+                  type: string
+                  description: 密碼
+                user:
+                  type: string
+                  description: 帳號
+      responses:
+        "302":
+          description: 跳轉到開始加密回應資料的頁面
+          headers:
+            location:
+              schema:
+                type: string
+                example: "https://www.svc.deltaww-energy.com:5001/sso/saml/api/login/process"
+              description: 轉址目標
+  /sso/saml/login/process:
+    get:
+      tags:
+      - server
+      summary: saml_login_process_start
+      responses:
+        "200":
+          description: |
+            轉址目的： 強迫讓 connection 由使用者發起，讓 idp 與 sp 不會直接互動。
+            The IdP Single Sign-On Service builds a SAML assertion representing the user's logon security context.
+            Since a POST binding is going to be used, the assertion is digitally signed and then placed within a SAML <Response> message.
+            The <Response> message is then placed within an HTML FORM as a hidden form control named SAMLResponse.
+            If the IdP received a RelayState value from the SP, it must return it unmodified to the SP in a hidden form control named RelayState.
+            The Single Sign-On Service sends the HTML form back to the browser in the HTTP response. 
+            For ease of use purposes, the HTML FORM typically will be accompanied by script code that will automatically post the form to the destination site.
+          content:
+            text/html: 
+              example: |
+                <html>
+                  <head>
+                    <title>SAML 2.0</title>
+                  </head>
+                  <body>
+                    <form action="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" method="post">
+                      <input type="hidden" name="SAMLResponse" value="...">
+                      <input type="hidden" name="RelayState" value="...">
+                      <input type="submit" value="Submit">
+                    </form>
+                  </body>
+                </html>
+    post:
+      tags:
+      - server
+      summary: saml_login_process
+      responses:
+        "302":
+          description: 跳轉到 saml_acs
+          headers:
+            location:
+              schema:
+                type: string
+                example: "https://www.svc.deltaww-energy.com:9000/saml/acs"
+              description: 轉址目標
+components: {}
+x-original-swagger-version: "2.0"
