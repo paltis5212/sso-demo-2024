@@ -1,20 +1,32 @@
-# mkcert
+## System requirement:
 
-Create SSL certificate
+1. Python3.11
+2. mkcert
 
-## install
+
+### Install related python library
 
 ```
-brew mkcert
+pip3 install -r requirements.txt -r saml_demo/requirements.txt
+```
+
+### Create SSL certificate
+
+## Install the local CA in the system trust store
+
+```
+brew install mkcert
 
 mkcert -install
 ```
 
-## create certificate
+### create certificate
 
 ```
 mkcert -key-file key.pem -cert-file cert.pem www.svc.deltaww-energy.com "*.deltaww-energy.com" localhost 127.0.0.1 ::1
 ```
+
+
 
 # How to create an OAuth 2.0 Provider
 
