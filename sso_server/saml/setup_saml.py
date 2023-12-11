@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 import logging
-from urllib import response
 
-from flask import Flask, Response, abort, redirect, request, session, url_for
+from flask import Flask, abort, redirect, request, session, url_for
 from flask.views import MethodView
 
 from flask_saml2.idp import IdentityProvider

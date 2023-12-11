@@ -22,8 +22,8 @@ paths:
     post:
       tags:
       - client
-      summary: redirect_to_sp
-      description: Get the assert from idp and decode the response with itself private
+      summary: 7. sp 收到 idp 的使用者資料
+      description: Get the assert 
       operationId: redirectToSp
       requestBody:
         content:
@@ -43,7 +43,7 @@ paths:
     get:
       tags:
       - client
-      summary: start saml login process
+      summary: 2.0 Start to redirect with authnRequest
       operationId: "start saml login process"
       responses:
         "302":
@@ -58,7 +58,7 @@ paths:
     get:
       tags:
       - client
-      summary: 轉址 idp saml
+      summary: 2.1 Redirect with authnRequest
       description: 轉址 idp saml
       operationId: idpSaml
       parameters:
@@ -96,7 +96,7 @@ paths:
     get:
       tags:
       - server
-      summary: IDP 接收 SP SAML 登入請求
+      summary: 2.2 IDP 接收來自 browser 的 SP SAML 登入請求
       description: request_to_idp_from_a
       operationId: requestToIdpFromA
       parameters:
@@ -160,10 +160,21 @@ paths:
           description: ""
           content: {}
   /sso/saml/login:
+    get:
+      tags:
+      - server
+      summary: 3. 顯示登入畫面
+      responses:
+        "200":
+          description: OK
+          content:
+            text/html:
+              schema:
+                type: string
     post:
       tags:
       - server
-      summary: login
+      summary: 4. 使用者登入
       description: login
       operationId: login
       parameters:
@@ -200,7 +211,7 @@ paths:
     get:
       tags:
       - server
-      summary: saml_login_process_start
+      summary: 5. 開始準備 saml response in html form
       responses:
         "200":
           description: |
@@ -229,7 +240,7 @@ paths:
     post:
       tags:
       - server
-      summary: saml_login_process
+      summary: 6. 將 signed saml response 轉給 sp
       responses:
         "302":
           description: 跳轉到 saml_acs

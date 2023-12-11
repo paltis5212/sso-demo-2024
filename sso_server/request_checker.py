@@ -142,17 +142,17 @@ def set_app_request_check_rules(app: Flask):
     #         if not agent_header or agent_header not in ["AGENT_1", "AGENT_2"]:
     #             abort(400, "Invalid or missing X-DSEBD-AGENT header")
 
-    # # EC09
-    # @app.after_request
-    # def add_timestamp_header(response):
-    #     timestamp = str(int(datetime.timestamp(datetime.now())))
-    #     response.headers["X-DSEBD-TIMESTAMP"] = timestamp
-    #     return response
+    # EC09
+    @app.after_request
+    def add_timestamp_header(response):
+        timestamp = str(int(datetime.timestamp(datetime.now())))
+        response.headers["X-DSEBD-TIMESTAMP"] = timestamp
+        return response
 
     # EC10
-    @app.before_request
-    def check_domain():
-        ALLOWED_DOMAIN = "www.svc.deltaww-energy.com"
-        hostname = urlparse(request.base_url).hostname
-        if hostname != ALLOWED_DOMAIN:
-            return ErrorResponse(message="Invalid domain").model_dump(mode="json"), 403
+    # @app.before_request
+    # def check_domain():
+    #     ALLOWED_DOMAIN = "www.svc.deltaww-energy.com"
+    #     hostname = urlparse(request.base_url).hostname
+    #     if hostname != ALLOWED_DOMAIN:
+    #         return ErrorResponse(message="Invalid domain").model_dump(mode="json"), 403
