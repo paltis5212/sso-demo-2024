@@ -3,19 +3,20 @@ import time
 import bcrypt
 from authlib.integrations.flask_oauth2 import current_token
 from authlib.oauth2 import OAuth2Error
-from flask import jsonify, redirect, render_template, request, session, url_for, abort
+from flask import abort, jsonify, redirect, render_template, request, session, url_for
 from flask_openapi3 import APIBlueprint
-from util.error_handler import ApiException
-from util.schema import ErrorResponse
+from werkzeug.security import gen_salt
+
 from sso_server.definition import TokenEndpointAuthMethod
 from sso_server.schema import (
-    PostHomeQuery,
     PostAuthorizeBody,
     PostCreateClientBody,
     PostHomeForm,
+    PostHomeQuery,
     PostRegisterBody,
 )
-from werkzeug.security import gen_salt
+from util.error_handler import ApiException
+from util.schema import ErrorResponse
 
 from .models import OAuth2Client, User, db
 from .oauth2 import authorization, require_oauth
@@ -34,18 +35,18 @@ def split_by_crlf(s: str):
 
 
 @api.get("/")
-def get_home():
+def get_home(query: PostHomeQuery):
     user = current_user()
     if user:
         clients = OAuth2Client.query.filter_by(user_id=user.id).all()
     else:
         clients = []
 
-    return render_template("home.html", user=user, clients=clients)
+    return render_template("home.html", user=user, clients=clients, next=query.next)
 
 
 @api.post("/")
-def post_home(query: PostHomeQuery, form: PostHomeForm):
+def post_home(form: PostHomeForm):
     """登入"""
     user: User = User.query.filter_by(username=form.username).first()
     if not user:
@@ -56,8 +57,8 @@ def post_home(query: PostHomeQuery, form: PostHomeForm):
     # 驗證通過，登入
     session["user_id"] = user.id
 
-    if query.next:
-        return redirect(query.next)
+    if form.next:
+        return redirect(form.next)
     return redirect("/")
 
 
@@ -145,7 +146,7 @@ def get_authorize():
     except OAuth2Error as error:
         raise ApiException(ErrorResponse(message=error.error))
 
-    return render_template("authorize.html", user=user, grant=grant)
+    return render_template("authorize.html", user=user, grant=grant, next=request.url)
 
 
 @api.post("/oauth/authorize")

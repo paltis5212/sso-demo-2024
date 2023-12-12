@@ -20,6 +20,7 @@ class PostHomeQuery(BaseModel):
 class PostHomeForm(BaseModel):
     username: str
     password: str
+    next: str
 
 
 class PostRegisterBody(BaseModel):
