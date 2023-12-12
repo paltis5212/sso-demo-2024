@@ -6,6 +6,9 @@ from authlib.integrations.requests_client import OAuth2Session
 from sso_server.oauth2 import authorization
 from authlib.integrations.requests_client.oauth2_session import OAuth2Session
 
+from util.other import rand_str
+from .models import db, User
+
 
 def get_sso() -> FlaskOAuth2App:
     return current_app.sso
@@ -15,8 +18,9 @@ def get_token() -> dict:
     return session.get("token")
 
 
-def pop_token() -> dict:
-    return session.pop("token")
+def logout():
+    session.pop("token")
+    session.pop("user_id")
 
 
 def refresh_token(sso: FlaskOAuth2App = None, refresh_token: str = None, token: dict = None) -> dict | None:
@@ -58,32 +62,37 @@ api = APIBlueprint("Service", __name__)
 def index():
     sso = get_sso()
     token = get_token()
-    profile = None
     if token:
         # try get my data
         try:
             response: Response = sso.get("/api/me", token=token)
             profile = response.json()
             response.raise_for_status()
-            uid = profile.get('id')
-
+            # add user
+            uid = profile["id"]
+            user = User.query.get(uid)
+            if not user:
+                user = User(source="sso", source_id=uid, rand_string=rand_str())
+                db.session.add(user)
+                db.session.commit()
+            session["user_id"] = user.id
             return profile
         except:
-            pass
+            logout()
 
         # try refresh token
         if new_token := refresh_token(sso, token["refresh_token"]):
             session["token"] = new_token
             return redirect("/")
         else:
-            pop_token()
+            logout()
 
     # try login
     redirect_uri = url_for(".authorize", _external=True)
     return sso.authorize_redirect(redirect_uri)
 
 
-@api.route("/authorize")
+@api.get("/authorize")
 def authorize():
     sso = get_sso()
     token = sso.authorize_access_token()

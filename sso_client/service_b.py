@@ -1,12 +1,24 @@
 from authlib.integrations.flask_client import OAuth
 from flask_openapi3 import OpenAPI
+from sso_client.authz import authz_config
 
 from util.error_handler import set_error_handlers
 from .routes import api
+from .models import db
 
 app = OpenAPI(__name__)
-app.config["SECRET_KEY"] = "secret"
+app.config.update({
+    "SECRET_KEY": "secret",
+    "SQLALCHEMY_DATABASE_FILENAME": "service_b.sqlite3",
+    "SQLALCHEMY_DATABASE_URI": "sqlite:///../../instance/service_b.sqlite3",
+    "SQLALCHEMY_TRACK_MODIFICATIONS": True
+})
 app.register_api(api)
+
+db.init_app(app)
+# Create tables if they do not exist already
+with app.app_context():
+    db.create_all()
 
 oauth = OAuth(app)
 sso = oauth.register(
@@ -27,6 +39,7 @@ sso = oauth.register(
 )
 app.sso = sso
 
+authz_config(app)
 set_error_handlers(app)
 
 app.run(host="0.0.0.0", port=5003, debug=True, ssl_context=("ca/cert.pem", "ca/key.pem"))
