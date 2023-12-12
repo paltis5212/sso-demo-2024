@@ -5,3 +5,5 @@ bcrypt
 flask_openapi3
 requests
 rich
+flask-authz
+casbin_sqlalchemy_adapter
