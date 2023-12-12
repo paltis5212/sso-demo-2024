@@ -21,13 +21,13 @@ class ExampleIdentityProvider(IdentityProvider):
             abort(redirect(next))
 
     def is_user_logged_in(self):
-        return "user" in session and session["user"] in users
+        return "samle_user" in session and session["samle_user"] in users
 
     def logout(self):
-        del session["user"]
+        del session["samle_user"]
 
     def get_current_user(self):
-        return users[session["user"]]
+        return users[session["samle_user"]]
 
 
 users = {
@@ -151,7 +151,8 @@ class Login(MethodView):
 
 def setup_saml(app: Flask):
     # app.debug = True
-    app.secret_key = "not a secret"
+    if "SECRET_KEY" not in app.config:
+        app.secret_key = "secret"
     app.config["SERVER_NAME"] = "www.svc.deltaww-energy.com:5001"
     app.config["SAML2_IDP"] = {
         "autosubmit": True,

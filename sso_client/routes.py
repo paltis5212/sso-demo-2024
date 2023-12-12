@@ -1,4 +1,4 @@
-from flask import redirect, current_app, session, url_for
+from flask import redirect, current_app, render_template, session, url_for
 from flask_openapi3 import APIBlueprint
 from requests import Response
 from authlib.integrations.flask_client.apps import FlaskOAuth2App
@@ -23,7 +23,9 @@ def logout():
     session.pop("user_id")
 
 
-def refresh_token(sso: FlaskOAuth2App = None, refresh_token: str = None, token: dict = None) -> dict | None:
+def refresh_token(
+    sso: FlaskOAuth2App = None, refresh_token: str = None, token: dict = None
+) -> dict | None:
     """
     Refresh token
 
@@ -50,7 +52,9 @@ def refresh_token(sso: FlaskOAuth2App = None, refresh_token: str = None, token: 
         return None
 
     try:
-        return sso.fetch_access_token(grant_type="refresh_token", refresh_token=refresh_token)
+        return sso.fetch_access_token(
+            grant_type="refresh_token", refresh_token=refresh_token
+        )
     except Exception:
         return None
 
@@ -76,7 +80,9 @@ def index():
                 db.session.add(user)
                 db.session.commit()
             session["user_id"] = user.id
-            return profile
+            return render_template(
+                "index.html", profile=profile, user=profile["username"], token=token
+            )
         except:
             logout()
 
@@ -90,6 +96,12 @@ def index():
     # try login
     redirect_uri = url_for(".authorize", _external=True)
     return sso.authorize_redirect(redirect_uri)
+
+
+@api.post("/logout")
+def post_logout():
+    logout()
+    return redirect("/")
 
 
 @api.get("/authorize")
