@@ -57,7 +57,7 @@ def index():
         The IdP sent back the following attributes:<p>
         '''
 
-        print(auth_data.to_dict())
+        # print(auth_data.to_dict())
 
         # attrs = '<dl>{}</dl>'.format(''.join(
         #     f'<dt>{attr}</dt><dd>{value}</dd>'

@@ -66,9 +66,10 @@ api = APIBlueprint("Service", __name__)
 def index():
     sso = get_sso()
     token = get_token()
-    if token:
+    if token is not None:
         # try get my data
         try:
+            print("Hi", token)
             response: Response = sso.get("/api/me", token=token)
             profile = response.json()
             response.raise_for_status()
@@ -81,9 +82,14 @@ def index():
                 db.session.commit()
             session["user_id"] = user.id
             return render_template(
-                "index.html", profile=profile, user=profile["username"], token=token
+                "index.html",
+                profile=profile,
+                user=profile["username"],
+                token=token,
+                app_name=current_app.info,
             )
-        except:
+        except Exception as error:
+            print(error)
             logout()
 
         # try refresh token
@@ -94,8 +100,10 @@ def index():
             logout()
 
     # try login
-    redirect_uri = url_for(".authorize", _external=True)
-    return sso.authorize_redirect(redirect_uri)
+    return render_template(
+        "index.html",
+        app_name=current_app.info,
+    )
 
 
 @api.post("/logout")
@@ -104,9 +112,16 @@ def post_logout():
     return redirect("/")
 
 
+@api.get("/oauth/start")
+def oauth_start():
+    sso = get_sso()
+    redirect_uri = url_for(".authorize", _external=True)
+    return sso.authorize_redirect(redirect_uri)
+
+
 @api.get("/authorize")
 def authorize():
     sso = get_sso()
     token = sso.authorize_access_token()
     session["token"] = token
-    return redirect("/")
+    return redirect(url_for(".index"))
