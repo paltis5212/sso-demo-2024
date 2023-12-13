@@ -7,8 +7,8 @@ from flask import abort, jsonify, redirect, render_template, request, session, u
 from flask_openapi3 import APIBlueprint
 from werkzeug.security import gen_salt
 
-from sso_server.definition import TokenEndpointAuthMethod
-from sso_server.schema import (
+from sso_server.oauth.definition import TokenEndpointAuthMethod
+from sso_server.oauth.schema import (
     PostAuthorizeBody,
     PostCreateClientBody,
     PostHomeForm,

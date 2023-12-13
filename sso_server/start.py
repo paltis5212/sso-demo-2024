@@ -1,7 +1,7 @@
 from sso_server.app import create_app
 
 app = create_app(
-    {
+    config={
         "SECRET_KEY": "secret",
         "OAUTH2_REFRESH_TOKEN_GENERATOR": True,
         "SQLALCHEMY_TRACK_MODIFICATIONS": True,

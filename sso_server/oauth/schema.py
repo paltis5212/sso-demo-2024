@@ -1,7 +1,7 @@
 from typing import Any, Optional
 from pydantic import BaseModel, Field
 
-from sso_server.definition import (
+from sso_server.oauth.definition import (
     SCOPES,
     ClientGrantType,
     ClientResponseType,
@@ -49,5 +49,3 @@ class PostAuthorizeBody(BaseModel):
 
 
 # * response
-
-

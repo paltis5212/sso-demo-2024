@@ -3,7 +3,7 @@ from flask_openapi3 import APIBlueprint
 from requests import Response
 from authlib.integrations.flask_client.apps import FlaskOAuth2App
 from authlib.integrations.requests_client import OAuth2Session
-from sso_server.oauth2 import authorization
+from sso_server.oauth.oauth2 import authorization
 from authlib.integrations.requests_client.oauth2_session import OAuth2Session
 
 from util.other import rand_str
