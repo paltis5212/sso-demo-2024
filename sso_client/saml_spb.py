@@ -73,7 +73,7 @@ def index():
 
         return message + attrs + logout
     else:
-        message = '<p>Hi~ this is Service Provider A</p><p>You are logged out.</p>'
+        message = '<p>Hi~ this is Service Provider B</p><p>You are logged out.</p>'
 
         login_url = url_for('flask_saml2_sp.login')
         link = f'<p><a href="{login_url}">Log in to continue</a></p>'

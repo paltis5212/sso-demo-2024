@@ -72,7 +72,7 @@ class Login(MethodView):
         if password != "12345":
             abort(401)
 
-        session["user"] = username
+        session["samle_user"] = username
         logging.info(f"Logged user {username} in")
         logging.info("Redirecting to", next_url)
 
