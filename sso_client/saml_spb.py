@@ -23,7 +23,7 @@ app = Flask(__name__)
 app.debug = True
 app.secret_key = "not a secret"
 
-app.config["SERVER_NAME"] = "www.svc.deltaww-energy.com:9001"
+app.config["SERVER_NAME"] = "saml-spb.deltaww-energy.com:9001"
 app.config["SAML2_SP"] = {
     "certificate": CERTIFICATE,
     "private_key": PRIVATE_KEY,

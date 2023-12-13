@@ -97,19 +97,27 @@ def setup_saml(app: Flask):
         {
             "CLASS": "sso_server.saml.tests.idp.base.AttributeSPHandler",
             "OPTIONS": {
-                "display_name": "Example Service Provider A",
-                "entity_id": "https://www.svc.deltaww-energy.com:9000/saml/metadata.xml",
-                "acs_url": "https://www.svc.deltaww-energy.com:9000/saml/acs/",
-                "certificate": SP_CERTIFICATE,
+                "display_name":
+                    "Example Service Provider A",
+                "entity_id":
+                    "https://saml-spa.deltaww-energy.com:9000/saml/metadata.xml",
+                "acs_url":
+                    "https://saml-spa.deltaww-energy.com:9000/saml/acs/",
+                "certificate":
+                    SP_CERTIFICATE,
             },
         },
         {
             "CLASS": "sso_server.saml.tests.idp.base.AttributeSPHandler",
             "OPTIONS": {
-                "display_name": "Example Service Provider B",
-                "entity_id": "https://www.svc.deltaww-energy.com:9001/saml/metadata.xml",
-                "acs_url": "https://www.svc.deltaww-energy.com:9001/saml/acs/",
-                "certificate": SP_CERTIFICATE,
+                "display_name":
+                    "Example Service Provider B",
+                "entity_id":
+                    "https://saml-spb.deltaww-energy.com:9001/saml/metadata.xml",
+                "acs_url":
+                    "https://saml-spb.deltaww-energy.com:9001/saml/acs/",
+                "certificate":
+                    SP_CERTIFICATE,
             },
         },
     ]

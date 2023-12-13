@@ -10,20 +10,20 @@ info:
 
     <img src="http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-tech-overview-2.0-cd-02_html_25426336.gif" />
 servers:
-- url: https://www.svc.deltaww-energy.com:9000/
-  description: saml server
-- url: https://www.svc.deltaww-energy.com:9001/
-  description: saml client
+  - url: https://www.svc.deltaww-energy.com:9000/
+    description: saml server
+  - url: https://saml-spb.deltaww-energy.com:9001/
+    description: saml client
 tags:
-- name: client
-- name: server
+  - name: client
+  - name: server
 paths:
   /saml/acs:
     post:
       tags:
-      - client
+        - client
       summary: 7. sp 收到 idp 的使用者資料
-      description: Get the assert 
+      description: Get the assert
       operationId: redirectToSp
       requestBody:
         content:
@@ -42,7 +42,7 @@ paths:
   /saml/login/:
     get:
       tags:
-      - client
+        - client
       summary: 2.0 Start to redirect with authnRequest
       operationId: "start saml login process"
       responses:
@@ -57,21 +57,21 @@ paths:
   /saml/login/idp/:
     get:
       tags:
-      - client
+        - client
       summary: 2.1 Redirect with authnRequest
       description: 轉址 idp saml
       operationId: idpSaml
       parameters:
-      - name: entity_id
-        in: query
-        schema:
-          type: string
-        example: "{{idp_host}}/sso/saml/api/metadata.xml"
-      - name: next
-        in: query
-        schema:
-          type: string
-        example: "{{sp_host}}"
+        - name: entity_id
+          in: query
+          schema:
+            type: string
+          example: "{{idp_host}}/sso/saml/api/metadata.xml"
+        - name: next
+          in: query
+          schema:
+            type: string
+          example: "{{sp_host}}"
       responses:
         "302":
           description: "根據 entity_id 取得 saml 通訊方式，並且將自己的request轉換成 xml + base64 編碼後，用 idp 的 public key 加密，加密結果透由 query parameter 傳給 idp"
@@ -84,7 +84,7 @@ paths:
   /saml/logout/:
     post:
       tags:
-      - client
+        - client
       summary: logout_from_sp
       description: logout_from_sp
       operationId: logoutFromSp
@@ -95,63 +95,63 @@ paths:
   /sso/saml/api/login/:
     get:
       tags:
-      - server
+        - server
       summary: 2.2 IDP 接收來自 browser 的 SP SAML 登入請求
       description: request_to_idp_from_a
       operationId: requestToIdpFromA
       parameters:
-      - name: SAMLRequest
-        in: query
-        schema:
-          type: string
-        description: |
-          The SAMLResponse parameter is the base64 encoding of the following <samlp:Response> element
-          ```
-          <samlp:AuthnRequest
-            xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
-            xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
-            ID="identifier_1"
-            Version="2.0"
-            IssueInstant="2004-12-05T09:21:59Z"
-            AssertionConsumerServiceIndex="1">
-            <saml:Issuer>https://sp.example.com/SAML2</saml:Issuer>
-            <samlp:NameIDPolicy
-            AllowCreate="true"
-            Format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient"/>
-          </samlp:AuthnRequest>
-          ```
-      - name: RelayState
-        in: query
-        schema:
-          type: string
-      - name: SigAlg
-        in: query
-        schema:
-          type: string
-          default: http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
-      - name: Signature
-        in: query
-        description: hash string via SigAlg and idp's public key
-        schema:
-          type: string
-          example: mEP9aoOIAGJzfJWkv0eplbDrObhZ7DDiSBwFiGG3rqQiLkOthbunJZgZbk4WpKSagCtjGQjw6bJI2BNrGZ7vkwFAR7VjWXATM15xi4wzNuudCJ8widpYcMINHQhzZTIIvVoQPdLtk4lhAg6wS0yMjrnZ8sCIx6MnMAlYFr3F3rRVhbCZ66eYpKSv7U3nhkY0zxwZKIIWmogB7QNOqUjEqwhFuHVCjbnZc4CH457GCLXPIfNSVWEKQSCTZf37udEEc%2B8%2BCGD3/6fBeHf97hdbZaGvi9YY39b5rwuzFHsztu0DhYTaqJxaeEgLM90Yf/jLE9cc5BV769w6lPOcRjF23A%3D%3D
+        - name: SAMLRequest
+          in: query
+          schema:
+            type: string
+          description: |
+            The SAMLResponse parameter is the base64 encoding of the following <samlp:Response> element
+            ```
+            <samlp:AuthnRequest
+              xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+              xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+              ID="identifier_1"
+              Version="2.0"
+              IssueInstant="2004-12-05T09:21:59Z"
+              AssertionConsumerServiceIndex="1">
+              <saml:Issuer>https://sp.example.com/SAML2</saml:Issuer>
+              <samlp:NameIDPolicy
+              AllowCreate="true"
+              Format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient"/>
+            </samlp:AuthnRequest>
+            ```
+        - name: RelayState
+          in: query
+          schema:
+            type: string
+        - name: SigAlg
+          in: query
+          schema:
+            type: string
+            default: http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
+        - name: Signature
+          in: query
+          description: hash string via SigAlg and idp's public key
+          schema:
+            type: string
+            example: mEP9aoOIAGJzfJWkv0eplbDrObhZ7DDiSBwFiGG3rqQiLkOthbunJZgZbk4WpKSagCtjGQjw6bJI2BNrGZ7vkwFAR7VjWXATM15xi4wzNuudCJ8widpYcMINHQhzZTIIvVoQPdLtk4lhAg6wS0yMjrnZ8sCIx6MnMAlYFr3F3rRVhbCZ66eYpKSv7U3nhkY0zxwZKIIWmogB7QNOqUjEqwhFuHVCjbnZc4CH457GCLXPIfNSVWEKQSCTZf37udEEc%2B8%2BCGD3/6fBeHf97hdbZaGvi9YY39b5rwuzFHsztu0DhYTaqJxaeEgLM90Yf/jLE9cc5BV769w6lPOcRjF23A%3D%3D
       responses:
-          "302":
-            description: "若 idp 未登入，則導轉到 /sso/saml/login 頁面讓使用者開始登入，若已登入，則將使用者資訊及屬性透過 saml 送給 sp 的 /saml/acs"
-            headers:
-              location:
-                schema:
-                  type: string
-                description: | 
-                  轉址目標，可能為：
+        "302":
+          description: "若 idp 未登入，則導轉到 /sso/saml/login 頁面讓使用者開始登入，若已登入，則將使用者資訊及屬性透過 saml 送給 sp 的 /saml/acs"
+          headers:
+            location:
+              schema:
+                type: string
+              description: |
+                轉址目標，可能為：
 
-                  ```https://www.svc.deltaww-energy.com:5001/sso/saml/login```
-                  或是 ```https://www.svc.deltaww-energy.com:9000/saml/api/login/process```
-            content: {}
+                ```https://www.svc.deltaww-energy.com:5001/sso/saml/login```
+                或是 ```https://www.svc.deltaww-energy.com:9000/saml/api/login/process```
+          content: {}
   /sso/saml/api/logout:
     get:
       tags:
-      - server
+        - server
       summary: logout_from_idp
       description: logout_from_idp
       operationId: logoutFromIdp
@@ -162,7 +162,7 @@ paths:
   /sso/saml/login:
     get:
       tags:
-      - server
+        - server
       summary: 3. 顯示登入畫面
       responses:
         "200":
@@ -173,15 +173,15 @@ paths:
                 type: string
     post:
       tags:
-      - server
+        - server
       summary: 4. 使用者登入
       description: login
       operationId: login
       parameters:
-      - name: ""
-        in: query
-        schema:
-          type: string
+        - name: ""
+          in: query
+          schema:
+            type: string
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -210,7 +210,7 @@ paths:
   /sso/saml/login/process:
     get:
       tags:
-      - server
+        - server
       summary: 5. 開始準備 saml response in html form
       responses:
         "200":
@@ -223,7 +223,7 @@ paths:
             The Single Sign-On Service sends the HTML form back to the browser in the HTTP response. 
             For ease of use purposes, the HTML FORM typically will be accompanied by script code that will automatically post the form to the destination site.
           content:
-            text/html: 
+            text/html:
               example: |
                 <html>
                   <head>
@@ -239,7 +239,7 @@ paths:
                 </html>
     post:
       tags:
-      - server
+        - server
       summary: 6. 將 signed saml response 轉給 sp
       responses:
         "302":
