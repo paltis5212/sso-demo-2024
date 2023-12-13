@@ -34,7 +34,7 @@ def split_by_crlf(s: str):
     return [v for v in s.splitlines() if v]
 
 
-@api.get("/")
+@api.get("/sso/oauth")
 def get_home(query: PostHomeQuery):
     user = current_user()
     if user:
@@ -42,11 +42,14 @@ def get_home(query: PostHomeQuery):
     else:
         clients = []
 
-    return render_template("home.html", user=user, clients=clients, next=query.next)
+    return render_template("home.html",
+                           user=user,
+                           clients=clients,
+                           next=query.next)
 
 
-@api.post("/")
-def post_home(form: PostHomeForm):
+@api.post("/sso/oauth/login")
+def post_oauth_login(form: PostHomeForm):
     """登入"""
     user: User = User.query.filter_by(username=form.username).first()
     if not user:
@@ -59,15 +62,15 @@ def post_home(form: PostHomeForm):
 
     if form.next:
         return redirect(form.next)
-    return redirect("/")
+    return redirect("/sso/oauth")
 
 
-@api.get("/register")
+@api.get("/sso/oauth/register")
 def get_register():
     return render_template("register.html")
 
 
-@api.post("/register")
+@api.post("/sso/oauth/register")
 def post_register(form: PostRegisterBody):
     """註冊"""
     username = form.username
@@ -87,19 +90,19 @@ def post_register(form: PostRegisterBody):
     return redirect("/")
 
 
-@api.get("/logout")
+@api.get("/sso/oauth/logout")
 def logout():
     """登出"""
     session.pop("user_id", None)
-    return redirect("/")
+    return redirect("/sso/oauth")
 
 
-@api.get("/create_client")
+@api.get("/sso/oauth/create_client")
 def get_create_client():
     return render_template("create_client.html")
 
 
-@api.post("/create_client")
+@api.post("/sso/oauth/create_client")
 def post_create_client(form: PostCreateClientBody):
     """建立客戶端"""
     user = current_user()
@@ -135,7 +138,7 @@ def post_create_client(form: PostCreateClientBody):
     return redirect("/")
 
 
-@api.get("/oauth/authorize")
+@api.get("/sso/oauth/authorize")
 def get_authorize():
     user = current_user()
     if not user:
@@ -146,10 +149,13 @@ def get_authorize():
     except OAuth2Error as error:
         raise ApiException(ErrorResponse(message=error.error))
 
-    return render_template("authorize.html", user=user, grant=grant, next=request.url)
+    return render_template("authorize.html",
+                           user=user,
+                           grant=grant,
+                           next=request.url)
 
 
-@api.post("/oauth/authorize")
+@api.post("/sso/oauth/authorize")
 def post_authorize(form: PostAuthorizeBody):
     user = current_user()
     if not user:
@@ -160,13 +166,13 @@ def post_authorize(form: PostAuthorizeBody):
     return authorization.create_authorization_response(grant_user=grant_user)
 
 
-@api.post("/oauth/token")
+@api.post("/sso/oauth/token")
 def issue_token():
     """根據 https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.1 規定，使用 form 來傳遞 Request。"""
     return authorization.create_token_response()
 
 
-@api.post("/oauth/revoke")
+@api.post("/sso/oauth/revoke")
 def revoke_token():
     return authorization.create_endpoint_response("revocation")
 
