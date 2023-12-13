@@ -20,15 +20,32 @@ brew install mkcert
 mkcert -install
 ```
 
-### create certificate
+### Create certificate
 
 ```
 mkcert -key-file key.pem -cert-file cert.pem www.svc.deltaww-energy.com "*.deltaww-energy.com" localhost 127.0.0.1 ::1
 ```
 
+### Setup serlf defined domain name
+
+```
+echo "127.0.0.1     www.svc.deltaww-energy.com" >> /etc/hosts
+```
+
+## Description of protocal and API
+
+### SAML 2.0 API and machinsm
+
+https://documenter.getpostman.com/view/31493157/2s9Ykhhjuh
+
+All API doc is written in postman document
+
+### OAUTH 2.0 API and machinsm
+
+https://documenter.getpostman.com/view/31493157/2s9YkjAPBq
 
 
-# How to create an OAuth 2.0 Provider
+## How to create an OAuth 2.0 Provider
 
 This is an example of OAuth 2.0 server in [Authlib](https://authlib.org/).
 If you are looking for old Flask-OAuthlib implementation, check the
@@ -36,15 +53,6 @@ If you are looking for old Flask-OAuthlib implementation, check the
 
 - Documentation: <https://docs.authlib.org/en/latest/flask/2/>
 - Authlib Repo: <https://github.com/lepture/authlib>
-
-## Sponsors
-
-<table>
-  <tr>
-    <td><img align="middle" width="48" src="https://user-images.githubusercontent.com/290496/39297078-89d00928-497d-11e8-8119-0c53afe14cd0.png"></td>
-    <td>If you want to quickly add secure token-based authentication to Python projects, feel free to check Auth0's Python SDK and free plan at <a href="https://auth0.com/overview?utm_source=GHsponsor&utm_medium=GHsponsor&utm_campaign=example-oauth2-server">auth0.com/overview</a>.</td>
-  </tr>
-</table>
 
 ## Take a quick look
 
