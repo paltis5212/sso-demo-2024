@@ -6,7 +6,7 @@ from util.error_handler import set_error_handlers
 from .routes import api
 from .models import db
 
-app = OpenAPI(__name__)
+app = OpenAPI(__name__, info="OAuth clent B")
 app.config.update({
     "SECRET_KEY": "secret",
     "SQLALCHEMY_DATABASE_FILENAME": "service_b.sqlite3",
@@ -41,5 +41,4 @@ app.sso = sso
 
 authz_config(app)
 set_error_handlers(app)
-
 app.run(host="0.0.0.0", port=5003, debug=True, ssl_context=("ca/cert.pem", "ca/key.pem"))
