@@ -1,0 +1,36 @@
+<html>
+    <body>
+        <h1>Oauth client A</h1>
+        Hello {{user}}
+        <pre>{{profile}}</pre>
+        <pre>{{token}}</pre>
+            <!-- Logout Button -->
+    <button id="logoutButton">Logout</button>
+
+    <!-- Your other HTML content here -->
+
+    <script>
+        // Function to handle the logout button click
+        function handleLogout() {
+            // Perform your post-logout API call here
+            // You can use fetch or any other method to send the request
+            fetch('/logout', {
+                method: 'POST',
+                redirect: 'manual',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => {
+                // window.location.href = "/"
+            })
+            .catch(error => {
+                console.error('Error during logout:', error);
+            });
+        }
+
+        // Add click event listener to the logout button
+        document.getElementById('logoutButton').addEventListener('click', handleLogout);
+    </script>
+    </body>
+</html>
