@@ -1,0 +1,5 @@
+1,p,admin,/rbac/admin*,*
+2,p,moderator,/rbac/moderator*,*
+3,p,user,/rbac/user*,*
+4,p,user,/rbac/roles*,*
+5,p,user,/rbac/role*,*
