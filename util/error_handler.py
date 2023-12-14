@@ -19,12 +19,10 @@ class ApiException(Exception):
 def set_error_handlers(app: OpenAPI):
     @app.after_request
     def after_request(response: Response):
-        form: bytes = request.get_data()
+        data: bytes = request.get_data()
         req_json: dict = request.get_json(silent=True)
-        res_json: dict = response.get_json(silent=True)
-        app.logger.info(f"Request Form: {form}")
-        app.logger.info(f"Request JSON: {req_json}")
-        app.logger.info(f"Response: {res_json}")
+        # app.logger.info(f"Request Data: {data}")
+        # app.logger.info(f"Response: {res_json}")
         # if res_json and res_json.get("error"):
         #     app.logger.warn(traceback.format_stack())
         return response

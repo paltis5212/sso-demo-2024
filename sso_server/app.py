@@ -3,7 +3,7 @@ import logging
 from flask_openapi3 import OpenAPI
 
 from util.error_handler import set_error_handlers
-from util.log import get_file_handler
+from util.log import get_file_handler, get_rich_handler
 
 from .request_checker import set_app_request_check_rules
 from .saml.setup_saml import setup_saml
@@ -28,6 +28,8 @@ def setup_app(app: OpenAPI):
 
     # register logger
     app.logger.setLevel(logging.INFO)
+    app.logger.handlers = []
+    app.logger.addHandler(get_rich_handler())
     app.logger.addHandler(get_file_handler("log/sso_server.log"))
 
     # register error handler
