@@ -1,14 +1,18 @@
+import logging
+
 from authlib.integrations.flask_client import OAuth
 from flask_openapi3 import OpenAPI
-
+from flask_openapi3.openapi import Info
 from sso_client.authz import api as authz_api
 from sso_client.authz import authz_config
 from util.error_handler import set_error_handlers
+from util.log import get_file_handler, get_rich_handler
 
 from .models import db
 from .routes import api
 
-app = OpenAPI(__name__, info="OAuth clent A")
+app = OpenAPI(__name__, info=Info(title="OAuth client A", version="0.0.0"))
+
 app.config.update(
     {
         "SECRET_KEY": "secret",
@@ -44,8 +48,15 @@ sso = oauth.register(
 )
 app.sso = sso
 
+# register logger
+app.logger.setLevel(logging.INFO)
+app.logger.handlers = []
+app.logger.addHandler(get_rich_handler())
+app.logger.addHandler(get_file_handler("log/sso_server.log"))
+
+
 authz_config(app)
-# set_error_handlers(app)
+set_error_handlers(app)
 app.run(
     host="0.0.0.0", port=5002, debug=True, ssl_context=("ca/cert.pem", "ca/key.pem")
 )
