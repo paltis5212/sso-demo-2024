@@ -94,11 +94,6 @@ api = APIBlueprint("Service", __name__)
 
 
 @api.get("/")
-def index():
-    return {}
-
-
-@api.get("/me")
 def get_me():
     sso = get_sso()
     token = get_token()
