@@ -69,7 +69,7 @@ def add_user(profile: dict):
     """
     # add user
     uid = profile["id"]
-    user = User.query.get(uid)
+    user = User.query.filter_by(source="sso", source_id=uid).first()
     if not user:
         user = User(source="sso", source_id=uid, rand_string=rand_str())
         db.session.add(user)
