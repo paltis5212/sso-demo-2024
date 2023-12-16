@@ -70,3 +70,8 @@ All API doc is written in postman document
 ### OAUTH 2.0 API and machinsm
 
 https://documenter.getpostman.com/view/31493157/2s9YkjAPBq
+
+### About RBAC
+
+https://www.svc-a.deltaww-energy.com:5002/openapi
+https://www.svc-b.deltaww-energy.com:5003/openapi
