@@ -1,13 +1,14 @@
+import flask_openapi3
 import os
 
-from flask import Flask
+from flask_openapi3 import OpenAPI
 
 from .models import db
 from .oauth2 import config_oauth
 from .routes import api
 
 
-def setup_oauth_app(app: Flask, config=None):
+def setup_oauth_app(app: OpenAPI, config=None):
     # load default configuration
     app.config.from_object("sso_server.oauth.settings")
 
