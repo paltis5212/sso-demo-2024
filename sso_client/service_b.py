@@ -53,11 +53,11 @@ app.sso = sso
 app.logger.setLevel(logging.INFO)
 app.logger.handlers = []
 app.logger.addHandler(get_rich_handler())
-app.logger.addHandler(get_file_handler("log/sso_server.log"))
+app.logger.addHandler(get_file_handler("log/service_b.log"))
 
 
 authz_config(app)
 set_error_handlers(app)
 app.run(
-    host="0.0.0.0", port=5002, debug=True, ssl_context=("ca/cert.pem", "ca/key.pem")
+    host="0.0.0.0", port=5003, debug=True, ssl_context=("ca/cert.pem", "ca/key.pem")
 )

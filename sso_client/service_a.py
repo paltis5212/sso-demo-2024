@@ -52,7 +52,7 @@ app.sso = sso
 app.logger.setLevel(logging.INFO)
 app.logger.handlers = []
 app.logger.addHandler(get_rich_handler())
-app.logger.addHandler(get_file_handler("log/sso_server.log"))
+app.logger.addHandler(get_file_handler("log/service_a.log"))
 
 
 authz_config(app)
