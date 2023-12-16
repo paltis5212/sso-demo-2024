@@ -31,5 +31,5 @@
   <input type="hidden" name="next" value="{{ next }}" />
   <button type="submit">Login</button>
 </form>
-<a href="{{ url_for('.get_register') }}">Register</a>
+<a href="{{ url_for('.get_register', **query) }}">Register</a>
 {% endif %}

@@ -8,7 +8,7 @@ from typing import Callable
 from pydantic import BaseModel, Field
 from sso_client.models import User
 from util.schema import ErrorResponse, SuccessResponse
-from util.error_handler import ApiException
+from util.exception import BadRequestException
 
 
 class Role(Enum):
@@ -104,7 +104,7 @@ def post_role(body: PostRoleBody):
             return SuccessResponse(message="add role success").model_dump(mode="json")
     except Exception:
         pass
-    raise ApiException(ErrorResponse(message="add role fail"))
+    raise BadRequestException(message="add role fail")
 
 
 @api.delete("/role/<string:user_id>/<string:role>")
@@ -119,7 +119,7 @@ def delete_role(path: DeleteRolePath):
             )
     except Exception:
         pass
-    raise ApiException(ErrorResponse(message="add role fail"))
+    raise BadRequestException(message="add role fail")
 
 
 @api.get("/admin/hello")

@@ -60,7 +60,6 @@ class SimpleMiddleware:
         method = environ["REQUEST_METHOD"]
         if method in ["PUT", "POST"] and new_environ["PATH_INFO"] == "/dsebd/sso/api/remove_query_string":
             new_environ["QUERY_STRING"] = ""
-        print(new_environ)
         return new_environ
 
 

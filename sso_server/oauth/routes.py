@@ -15,11 +15,12 @@ from sso_server.oauth.schema import (
     PostHomeQuery,
     PostRegisterBody,
 )
-from util.error_handler import ApiException
+from util.exception import BadRequestException
 from util.schema import ErrorResponse
 
 from .models import OAuth2Client, User, db
 from .oauth2 import authorization, require_oauth
+from html import escape
 
 api = APIBlueprint("home", __name__)
 
@@ -42,10 +43,9 @@ def get_home(query: PostHomeQuery):
     else:
         clients = []
 
-    return render_template("home.html",
-                           user=user,
-                           clients=clients,
-                           next=query.next)
+    return render_template(
+        "home.html", user=user, clients=clients, next=query.next if query.next else "", query=request.args
+    )
 
 
 @api.post("/sso/oauth/login")
@@ -53,9 +53,9 @@ def post_oauth_login(form: PostHomeForm):
     """登入"""
     user: User = User.query.filter_by(username=form.username).first()
     if not user:
-        raise ApiException(ErrorResponse(message="User not found."))
+        raise BadRequestException(message="User not found.")
     if not user.check_password(form.password):
-        raise ApiException(ErrorResponse(message="Invalid password."))
+        raise BadRequestException(message="Invalid password.")
 
     # 驗證通過，登入
     session["user_id"] = user.id
@@ -67,7 +67,7 @@ def post_oauth_login(form: PostHomeForm):
 
 @api.get("/sso/oauth/register")
 def get_register():
-    return render_template("register.html")
+    return render_template("register.html", query=request.args)
 
 
 @api.post("/sso/oauth/register")
@@ -77,7 +77,11 @@ def post_register(form: PostRegisterBody):
 
     user: User = User.query.filter_by(username=username).first()
     if user:
-        raise ApiException(ErrorResponse(message="User already exists."))
+        raise BadRequestException(message="User already exists.")
+
+    # 不可用特殊字元
+    if username != escape(username):
+        raise BadRequestException(message="Username contains invalid characters.")
 
     # 加密
     password = form.password.encode("utf-8")
@@ -86,8 +90,9 @@ def post_register(form: PostRegisterBody):
     user = User(username=username, password=password)
     db.session.add(user)
     db.session.commit()
-
-    return redirect("/")
+    query_string = request.query_string.decode('utf-8')
+    query_string = f"?{query_string}" if query_string else ""
+    return redirect(f"/sso/oauth{query_string}")
 
 
 @api.get("/sso/oauth/logout")
@@ -147,12 +152,9 @@ def get_authorize():
     try:
         grant = authorization.get_consent_grant(end_user=user)
     except OAuth2Error as error:
-        raise ApiException(ErrorResponse(message=error.error))
+        raise BadRequestException(message=error.error)
 
-    return render_template("authorize.html",
-                           user=user,
-                           grant=grant,
-                           next=request.url)
+    return render_template("authorize.html", user=user, grant=grant, next=request.url)
 
 
 @api.post("/sso/oauth/authorize")
