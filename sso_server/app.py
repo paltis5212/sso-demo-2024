@@ -19,7 +19,7 @@ def create_app(config=None):
 
     setup_oauth_app(app=app, config=config)
     setup_app(app)
-    # set_app_request_check_rules(app)
+    set_app_request_check_rules(app)
     setup_saml(app)
     return app
 
