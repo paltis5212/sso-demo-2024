@@ -94,7 +94,7 @@ api = APIBlueprint("Service", __name__)
 
 
 @api.get("/")
-def get_me():
+def index():
     sso = get_sso()
     token = get_token()
     if token is not None:
@@ -109,7 +109,7 @@ def get_me():
             return render_template(
                 "index.html",
                 profile=profile,
-                user=profile["username"],
+                user=user,
                 token=token,
                 app_name=current_app.info.title,
             )

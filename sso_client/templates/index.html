@@ -3,7 +3,8 @@
 
 <body>
     <h1>{{app_name}}</h1>
-    Hello {{user}}
+    Hello {{profile["username"]}}
+    <pre>Random String: {{user.rand_string}}</pre>
     <pre>{{profile}}</pre>
     <pre>{{token}}</pre>
     <!-- Logout Button -->
@@ -37,6 +38,6 @@
 </body>
 {% else %}
 <h1>{{app_name}}</h1>
-<a href="/oauth/start">Clict me th start oauth login</a>
+<a href="/oauth/start">Click me th start oauth login</a>
 {% endif %}
 </html>
