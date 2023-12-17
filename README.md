@@ -78,4 +78,5 @@ https://documenter.getpostman.com/view/10084986/2s9Ykn92ZX
 #### For local test
 
 https://www.svc-a.deltaww-energy.com:5002/openapi
+
 https://www.svc-b.deltaww-energy.com:5003/openapi
