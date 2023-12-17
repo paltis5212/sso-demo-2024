@@ -65,7 +65,7 @@ class Login(MethodView):
 
         session["saml_user"] = username
         current_app.logger.info(f"Logged user {username} in")
-        current_app.logger.info("Redirecting to", next_url)
+        current_app.logger.info(f"Redirecting to {next_url}")
 
         return redirect(next_url)
 
