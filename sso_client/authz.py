@@ -101,6 +101,7 @@ def post_role(body: PostRoleBody):
         return manager
     try:
         if manager.add_role_for_user(body.user_id, body.role.value):
+            manager.load_policy()
             return SuccessResponse(message="add role success").model_dump(mode="json")
     except Exception:
         pass
@@ -114,6 +115,7 @@ def delete_role(path: DeleteRolePath):
         return manager
     try:
         if manager.delete_role_for_user(path.user_id, path.role.value):
+            manager.load_policy()
             return SuccessResponse(message="delete role success").model_dump(
                 mode="json"
             )

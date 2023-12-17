@@ -1,16 +1,11 @@
 #!/usr/bin/env python3
-import logging
-
-from flask import Flask, abort, redirect, request, session, url_for
+from flask import Flask, abort, redirect, request, session, url_for, current_app
 from flask.views import MethodView
 
 from flask_saml2.idp import IdentityProvider
 
 from .tests.idp.base import CERTIFICATE, PRIVATE_KEY, User
 from .tests.sp.base import CERTIFICATE as SP_CERTIFICATE
-
-logger = logging.getLogger(__name__)
-
 
 class ExampleIdentityProvider(IdentityProvider):
 
@@ -21,13 +16,13 @@ class ExampleIdentityProvider(IdentityProvider):
             abort(redirect(next))
 
     def is_user_logged_in(self):
-        return "samle_user" in session and session["samle_user"] in users
+        return "saml_user" in session and session["saml_user"] in users
 
     def logout(self):
-        del session["samle_user"]
+        del session["saml_user"]
 
     def get_current_user(self):
-        return users[session["samle_user"]]
+        return users[session["saml_user"]]
 
 
 users = {
@@ -63,24 +58,16 @@ class Login(MethodView):
         username = request.form["user"]
         password = request.form["password"]
         next_url = request.form["next"]
-        # data = request.get_json()
-        # username = data.get("username")
-        # password = data.get("password")
-        # next_url = data.get("next")
 
         # TODO: if password not match...
         if password != "12345":
             abort(401)
 
-        session["samle_user"] = username
-        logging.info(f"Logged user {username} in")
-        logging.info("Redirecting to", next_url)
-
-        from rich import print
-        print(next_url)
+        session["saml_user"] = username
+        current_app.logger.info(f"Logged user {username} in")
+        current_app.logger.info("Redirecting to", next_url)
 
         return redirect(next_url)
-        # return Response("Good", 200)
 
 
 def setup_saml(app: Flask):

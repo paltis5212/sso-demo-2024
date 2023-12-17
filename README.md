@@ -43,7 +43,7 @@ echo "127.0.0.1 www.svc.deltaww-energy.com
 ### Start services
 
 ```bash
-# OAuth server and SAML server
+# OAuth IdP server and SAML IdP server
 # https://www.svc.deltaww-energy.com:5001/sso/oauth
 # https://www.svc.deltaww-energy.com:5001/sso/saml/login
 python -m sso_server.start
@@ -71,7 +71,11 @@ All API doc is written in postman document
 
 https://documenter.getpostman.com/view/31493157/2s9YkjAPBq
 
-### About RBAC
+### RBAC API and machinsm
+
+https://documenter.getpostman.com/view/10084986/2s9Ykn92ZX
+
+#### For local test
 
 https://www.svc-a.deltaww-energy.com:5002/openapi
 https://www.svc-b.deltaww-energy.com:5003/openapi
